@@ -42,6 +42,7 @@ public class LoginUserServlet extends HttpServlet {
     	}else{
     		log.debug("login success");
     		session.setAttribute("user", user);
+    		session.setAttribute("userId", user.getUserId());
     		resp.sendRedirect("/user/list");
     	}
     	
