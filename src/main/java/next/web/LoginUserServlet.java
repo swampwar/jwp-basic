@@ -35,14 +35,16 @@ public class LoginUserServlet extends HttpServlet {
     	
     	if(user == null){
     		log.debug("login fail : DataBase User is null");
+    		resp.sendRedirect("/user/login_failed.jsp");
     	}else if(!user.getPassword().equals(password)){
     		log.debug("login fail : password is not correct");
+    		resp.sendRedirect("/user/login_failed.jsp");
     	}else{
     		log.debug("login success");
     		session.setAttribute("user", user);
+    		resp.sendRedirect("/user/list");
     	}
     	
-    	resp.sendRedirect("/user/list");
         
     }
 }
