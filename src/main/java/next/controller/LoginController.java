@@ -1,51 +1,58 @@
 package next.controller;
 
-import java.io.IOException;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import core.db.DataBase;
 import next.model.User;
 
-@WebServlet(value = { "/users/login", "/users/loginForm" })
-public class LoginController extends HttpServlet {
+public class LoginController implements Controller {
     private static final long serialVersionUID = 1L;
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        forward("/user/login.jsp", req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userId = req.getParameter("userId");
-        String password = req.getParameter("password");
-        User user = DataBase.findUserById(userId);
-        if (user == null) {
-            req.setAttribute("loginFailed", true);
-            forward("/user/login.jsp", req, resp);
-            return;
-        }
-
-        if (user.matchPassword(password)) {
-            HttpSession session = req.getSession();
-            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
-            resp.sendRedirect("/");
-        } else {
-            req.setAttribute("loginFailed", true);
-            forward("/user/login.jsp", req, resp);
-        }
-    }
-
-    private void forward(String forwardUrl, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        RequestDispatcher rd = req.getRequestDispatcher(forwardUrl);
-        rd.forward(req, resp);
-    }
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+    
+	@Override
+	public String excecute(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String returnURL = "";
+		
+		String requestURL = request.getRequestURI();
+		if(requestURL.startsWith("/users/loginForm")){
+			
+			log.debug("loginForm 오픈");
+			returnURL = "/user/login.jsp";
+		
+		}else if(requestURL.startsWith("/users/login")){
+			
+			log.debug("login 실행");
+	        String userId = request.getParameter("userId");
+	        String password = request.getParameter("password");
+	        User user = DataBase.findUserById(userId);
+	        
+	        if (user == null) {
+	        	
+	        	log.debug("등록된 userId 없음 : {}", userId);
+	        	request.setAttribute("loginFailed", true);
+	        	returnURL = "/user/login.jsp";
+	        	
+	        } else if(user.matchPassword(password)){
+	        	
+	        	log.debug("로그인 성공 : {}", userId);
+	            HttpSession session = request.getSession();
+	            session.setAttribute(UserSessionUtils.USER_SESSION_KEY, user);
+	            returnURL = "/";
+	            
+	        } else {
+	        	
+	        	log.debug("로그인 실패 : {}", userId);
+	        	request.setAttribute("loginFailed", true);
+	        	returnURL = "/user/login.jsp";
+	        	
+	        }
+		}
+		
+		return returnURL;
+	}
 }
