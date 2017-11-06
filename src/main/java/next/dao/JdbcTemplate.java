@@ -5,20 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import core.jdbc.ConnectionManager;
-import next.model.User;
 
-public class UpdateJDBCTemplate {
+public abstract class JdbcTemplate {
 	
-	public void update(User user, UserDao dao) throws SQLException{
+	public void update(String sql) throws SQLException{
 
     	Connection con = null;
     	PreparedStatement pstmt = null;
 
         try {
         	con = ConnectionManager.getConnection();
-        	String sql = dao.createQueryForUpdate();
             pstmt = con.prepareStatement(sql);
-            dao.setValuesForUpdate(user, pstmt);
+            setValues(pstmt);
             
             pstmt.executeUpdate();
             
@@ -33,6 +31,6 @@ public class UpdateJDBCTemplate {
         }
 
 	}
-	
-	
+
+	public abstract void setValues(PreparedStatement pstmt) throws SQLException;
 }
