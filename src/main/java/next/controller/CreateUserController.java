@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import core.db.DataBase;
 import core.mvc.Controller;
 import next.dao.UserDao;
+import next.exception.DataAccessException;
 import next.model.User;
 
 public class CreateUserController implements Controller {
@@ -25,7 +26,7 @@ public class CreateUserController implements Controller {
         try{
         	UserDao dao = new UserDao();
         	dao.insert(user);
-        } catch(SQLException e){
+        } catch(DataAccessException e){
         	log.error(e.getMessage());
         }
         

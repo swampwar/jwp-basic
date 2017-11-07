@@ -8,41 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import core.jdbc.ConnectionManager;
+import next.exception.DataAccessException;
 
 public class JdbcTemplate {
 	
-	public void update(String sql,PreparedStatementSetter pss) throws SQLException{
-    	Connection con = null;
-    	PreparedStatement pstmt = null;
-        try {
-        	con = ConnectionManager.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pss.setValues(pstmt);
+	public void update(String sql,PreparedStatementSetter pss) throws DataAccessException{
+        try(Connection con = ConnectionManager.getConnection();
+        		PreparedStatement pstmt = con.prepareStatement(sql)) {
             
+        	pss.setValues(pstmt);
             pstmt.executeUpdate();
             
-        } finally {
-            if (pstmt != null) {
-                pstmt.close();
-            }
-
-            if (con != null) {
-                con.close();
-            }
+        }catch(SQLException e){
+        	throw new DataAccessException(e);
         }
-
 	}
 	
-	public List query(String sql,PreparedStatementSetter pss, RowMapper rowMapper) throws SQLException{
-    	Connection con = null;
-    	PreparedStatement pstmt = null;
+	public List query(String sql,PreparedStatementSetter pss, RowMapper rowMapper) throws DataAccessException{
     	ResultSet rs = null;
         List<Object> list = new ArrayList<Object>();
-        try {
-        	con = ConnectionManager.getConnection();
-            pstmt = con.prepareStatement(sql);
-            pss.setValues(pstmt);
+        try(Connection con = ConnectionManager.getConnection();
+        		PreparedStatement pstmt = con.prepareStatement(sql)) {
             
+        	pss.setValues(pstmt);
             rs = pstmt.executeQuery();
             
             // ResultSet을 List로 변환
@@ -52,20 +40,20 @@ public class JdbcTemplate {
             }
             return list;
             
-        } finally {
+        }catch(SQLException e){
+        	throw new DataAccessException(e);
+        }finally {
             if (rs != null) {
-                rs.close();
+                try {
+					rs.close();
+				} catch (SQLException e) {
+					throw new DataAccessException(e);
+				}
             }  
-            if (pstmt != null) {
-                pstmt.close();
-            }
-            if (con != null) {
-                con.close();
-            }
         }
 	}
-	
-	public Object queryForObject(String sql,PreparedStatementSetter pss, RowMapper rowMapper) throws SQLException{
+
+	public Object queryForObject(String sql,PreparedStatementSetter pss, RowMapper rowMapper) throws DataAccessException{
 		List list = query(sql,pss,rowMapper);
 		if(list.isEmpty()){
 			return null;
