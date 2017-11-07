@@ -9,15 +9,15 @@ import java.util.List;
 
 import core.jdbc.ConnectionManager;
 
-public abstract class JdbcTemplate {
+public class JdbcTemplate {
 	
-	public void update(String sql) throws SQLException{
+	public void update(String sql,PreparedStatementSetter pss) throws SQLException{
     	Connection con = null;
     	PreparedStatement pstmt = null;
         try {
         	con = ConnectionManager.getConnection();
             pstmt = con.prepareStatement(sql);
-            setValues(pstmt);
+            pss.setValues(pstmt);
             
             pstmt.executeUpdate();
             
@@ -33,7 +33,7 @@ public abstract class JdbcTemplate {
 
 	}
 	
-	public List query(String sql) throws SQLException{
+	public List query(String sql,PreparedStatementSetter pss, RowMapper rowMapper) throws SQLException{
     	Connection con = null;
     	PreparedStatement pstmt = null;
     	ResultSet rs = null;
@@ -41,13 +41,13 @@ public abstract class JdbcTemplate {
         try {
         	con = ConnectionManager.getConnection();
             pstmt = con.prepareStatement(sql);
-            setValues(pstmt);
+            pss.setValues(pstmt);
             
             rs = pstmt.executeQuery();
             
             // ResultSet을 List로 변환
             while(rs.next()){
-            	Object obj = mapRow(rs);
+            	Object obj = rowMapper.mapRow(rs);
             	list.add(obj);
             }
             return list;
@@ -65,16 +65,13 @@ public abstract class JdbcTemplate {
         }
 	}
 	
-	public Object queryForObject(String sql) throws SQLException{
-		List list = query(sql);
+	public Object queryForObject(String sql,PreparedStatementSetter pss, RowMapper rowMapper) throws SQLException{
+		List list = query(sql,pss,rowMapper);
 		if(list.isEmpty()){
 			return null;
 		}
 		
 		return list.get(0);
 	}
-
-	public abstract void setValues(PreparedStatement pstmt) throws SQLException;
-	public abstract Object mapRow(ResultSet rs) throws SQLException;
 
 }
