@@ -42,9 +42,9 @@ public class UserDao {
     }
 
     public List<User> findAll() {
-    	RowMapper rowMapper = new RowMapper() {
+    	RowMapper<User> rowMapper = new RowMapper<User>() {
 			@Override
-			public Object mapRow(ResultSet rs) throws SQLException {
+			public User mapRow(ResultSet rs) throws SQLException {
 				User user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),rs.getString("email"));
 				return user;
 			}
@@ -58,15 +58,15 @@ public class UserDao {
     	
 		String sql = "SELECT userId, password, name, email FROM USERS WHERE 1=1";
     	JdbcTemplate selectJdbcTemplate = new JdbcTemplate();
-        ArrayList<User> userList = (ArrayList<User>)selectJdbcTemplate.query(sql,pss,rowMapper);
-    	
+        List<User> userList = selectJdbcTemplate.<User>query(sql,pss,rowMapper);
+        
         return userList;
     }
 
     public User findByUserId(String userId) {
-    	RowMapper rowMapper = new RowMapper() {
+    	RowMapper<User> rowMapper = new RowMapper<User>() {
 			@Override
-			public Object mapRow(ResultSet rs) throws SQLException {
+			public User mapRow(ResultSet rs) throws SQLException {
 				User user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),rs.getString("email"));
 				return user;
 			}
@@ -81,7 +81,7 @@ public class UserDao {
 		
 		String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
     	JdbcTemplate selectJdbcTemplate = new JdbcTemplate();
-		User user = (User)selectJdbcTemplate.queryForObject(sql,pss,rowMapper);
+		User user = selectJdbcTemplate.queryForObject(sql,pss,rowMapper);
 		
 		return user;
     }
