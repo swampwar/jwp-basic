@@ -17,7 +17,7 @@ public abstract class SelectJdbcTemplate {
     	Connection con = null;
     	PreparedStatement pstmt = null;
     	ResultSet rs = null;
-    	ArrayList<Object> list = new ArrayList<>();
+        List list = null;
 
         try {
         	con = ConnectionManager.getConnection();
@@ -27,12 +27,8 @@ public abstract class SelectJdbcTemplate {
             rs = pstmt.executeQuery();
             
             // ResultSet을 List로 변환
-//            
-//            if (rs.next()) {
-//                user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
-//                        rs.getString("email"));
-//            }
-            
+            list = mapRow(rs);
+
         } finally {
             if (rs != null) {
                 rs.close();
@@ -50,5 +46,6 @@ public abstract class SelectJdbcTemplate {
 	}
 
 	public abstract void setValues(PreparedStatement pstmt) throws SQLException;
+	public abstract List mapRow(ResultSet rs) throws SQLException;
 	
 }
