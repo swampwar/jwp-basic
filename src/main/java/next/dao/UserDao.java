@@ -20,6 +20,11 @@ public class UserDao {
 		        pstmt.setString(3, user.getName());
 		        pstmt.setString(4, user.getEmail());
 			}
+
+			@Override
+			public Object mapRow(ResultSet rs) throws SQLException {
+				return null;
+			}
 		};
 		
     	String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
@@ -36,6 +41,11 @@ public class UserDao {
 		        pstmt.setString(3, user.getEmail());
 		        pstmt.setString(4, user.getUserId());
 			}
+
+			@Override
+			public Object mapRow(ResultSet rs) throws SQLException {
+				return null;
+			}
 		};
 		
 		String sql = "UPDATE USERS SET password = ?, name = ?, email = ? WHERE userID = ?";
@@ -43,53 +53,43 @@ public class UserDao {
     }
 
     public List<User> findAll() throws SQLException {
-    	SelectJdbcTemplate selectJdbcTemplate = new SelectJdbcTemplate() {
+    	JdbcTemplate selectJdbcTemplate = new JdbcTemplate() {
 			
 			@Override
 			public void setValues(PreparedStatement pstmt) throws SQLException {
 			}
 			
 			@Override
-			public List mapRow(ResultSet rs) throws SQLException {
-				ArrayList<User> list = new ArrayList<>();
-				while(rs.next()){
-					User user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),rs.getString("email"));
-					list.add(user);
-				}
-				return list;
+			public Object mapRow(ResultSet rs) throws SQLException {
+				User user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),rs.getString("email"));
+				return user;
 			}
 		};
     	
     	String sql = "SELECT userId, password, name, email FROM USERS WHERE 1=1";
-        ArrayList<User> userList = new ArrayList<User>();
-        userList = (ArrayList<User>)selectJdbcTemplate.select(sql);
+        ArrayList<User> userList = (ArrayList<User>)selectJdbcTemplate.query(sql);
     	
         return userList;
     }
 
     public User findByUserId(String userId) throws SQLException {
-    	SelectJdbcTemplate selectJdbcTemplate = new SelectJdbcTemplate() {
+    	JdbcTemplate selectJdbcTemplate = new JdbcTemplate() {
 			@Override
 			public void setValues(PreparedStatement pstmt) throws SQLException {
 				pstmt.setString(1, userId);
 			}
 
 			@Override
-			public List mapRow(ResultSet rs) throws SQLException{
-				ArrayList<User> list = new ArrayList<>();
-				while(rs.next()){
-					User user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),rs.getString("email"));
-					list.add(user);
-				}
-				return list;
+			public Object mapRow(ResultSet rs) throws SQLException{
+				User user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),rs.getString("email"));
+				return user;
 			}
 		};
 		
 		String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
-		ArrayList<User> userList = new ArrayList<>();
-		userList = (ArrayList<User>) selectJdbcTemplate.select(sql);
+		User user = (User)selectJdbcTemplate.queryForObject(sql);
 		
-		return userList.get(0);
+		return user;
     }
 
 }

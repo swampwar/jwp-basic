@@ -12,12 +12,11 @@ import next.model.User;
 
 public abstract class SelectJdbcTemplate {
 
-	public List select(String sql) throws SQLException{
-
+	public List query(String sql) throws SQLException{
     	Connection con = null;
     	PreparedStatement pstmt = null;
     	ResultSet rs = null;
-        List list = null;
+        List<Object> list = new ArrayList<Object>();
 
         try {
         	con = ConnectionManager.getConnection();
@@ -27,8 +26,13 @@ public abstract class SelectJdbcTemplate {
             rs = pstmt.executeQuery();
             
             // ResultSet을 List로 변환
-            list = mapRow(rs);
+            while(rs.next()){
+            	Object obj = mapRow(rs);
+            	list.add(obj);
+            }
 
+            return list;
+            
         } finally {
             if (rs != null) {
                 rs.close();
@@ -40,12 +44,18 @@ public abstract class SelectJdbcTemplate {
                 con.close();
             }
         }
-        
-        return list;
-
+	}
+	
+	public Object queryForObject(String sql) throws SQLException{
+		List list = query(sql);
+		if(list.isEmpty()){
+			return null;
+		}
+		
+		return list.get(0);
 	}
 
 	public abstract void setValues(PreparedStatement pstmt) throws SQLException;
-	public abstract List mapRow(ResultSet rs) throws SQLException;
+	public abstract Object mapRow(ResultSet rs) throws SQLException;
 	
 }
