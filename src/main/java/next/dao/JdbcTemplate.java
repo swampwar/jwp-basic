@@ -12,11 +12,13 @@ import next.exception.DataAccessException;
 
 public class JdbcTemplate {
 	
-	public void update(String sql,PreparedStatementSetter pss) throws DataAccessException{
+	public void update(String sql, Object... parameters) throws DataAccessException{
         try(Connection con = ConnectionManager.getConnection();
         		PreparedStatement pstmt = con.prepareStatement(sql)) {
             
-        	pss.setValues(pstmt);
+        	for(int idx=0;idx<parameters.length;idx++){
+        		pstmt.setObject(idx+1, parameters[idx]);
+        	}
             pstmt.executeUpdate();
             
         }catch(SQLException e){
@@ -24,13 +26,18 @@ public class JdbcTemplate {
         }
 	}
 	
-	public <T> List<T> query(String sql,PreparedStatementSetter pss, RowMapper<T> rowMapper) throws DataAccessException{
+	public <T> List<T> query(String sql, RowMapper<T> rowMapper, Object... parameters) throws DataAccessException{
     	ResultSet rs = null;
         List<T> list = new ArrayList<T>();
         try(Connection con = ConnectionManager.getConnection();
         		PreparedStatement pstmt = con.prepareStatement(sql)) {
             
-        	pss.setValues(pstmt);
+        	if(parameters != null){
+        		for(int idx=0;idx<parameters.length;idx++){
+        			pstmt.setObject(idx+1, parameters[idx]);
+        		}
+        	}
+        	
             rs = pstmt.executeQuery();
             
             // ResultSet을 List로 변환
@@ -53,8 +60,8 @@ public class JdbcTemplate {
         }
 	}
 
-	public <T> T queryForObject(String sql,PreparedStatementSetter pss, RowMapper<T> rowMapper) throws DataAccessException{
-		List<T> list = query(sql,pss,rowMapper);
+	public <T> T queryForObject(String sql, RowMapper<T> rowMapper, Object... parameters) throws DataAccessException{
+		List<T> list = query(sql, rowMapper, parameters);
 		if(list.isEmpty()){
 			return null;
 		}

@@ -10,35 +10,15 @@ import next.model.User;
 
 public class UserDao {
     public void insert(User user) {
-    	PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement pstmt) throws SQLException {
-		        pstmt.setString(1, user.getUserId());
-		        pstmt.setString(2, user.getPassword());
-		        pstmt.setString(3, user.getName());
-		        pstmt.setString(4, user.getEmail());
-			}
-		};
-    	
 		String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
     	JdbcTemplate jdbcTemplate = new JdbcTemplate();
-    	jdbcTemplate.update(sql,pss);
+    	jdbcTemplate.update(sql,user.getUserId(),user.getPassword(),user.getName(),user.getEmail());
     }
     
     public void update(User user) {
-    	PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement pstmt) throws SQLException {
-		        pstmt.setString(1, user.getPassword());
-		        pstmt.setString(2, user.getName());
-		        pstmt.setString(3, user.getEmail());
-		        pstmt.setString(4, user.getUserId());
-			}
-		};
-		
 		String sql = "UPDATE USERS SET password = ?, name = ?, email = ? WHERE userID = ?";
     	JdbcTemplate jdbcTemplate = new JdbcTemplate();
-    	jdbcTemplate.update(sql,pss);
+    	jdbcTemplate.update(sql,user.getPassword(),user.getName(),user.getEmail(),user.getUserId());
     }
 
     public List<User> findAll() {
@@ -49,16 +29,10 @@ public class UserDao {
 				return user;
 			}
 		};
-		
-    	PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement pstmt) throws SQLException {
-			}
-		};
-    	
+
 		String sql = "SELECT userId, password, name, email FROM USERS WHERE 1=1";
     	JdbcTemplate selectJdbcTemplate = new JdbcTemplate();
-        List<User> userList = selectJdbcTemplate.<User>query(sql,pss,rowMapper);
+        List<User> userList = selectJdbcTemplate.<User>query(sql,rowMapper,null);
         
         return userList;
     }
@@ -81,7 +55,7 @@ public class UserDao {
 		
 		String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
     	JdbcTemplate selectJdbcTemplate = new JdbcTemplate();
-		User user = selectJdbcTemplate.queryForObject(sql,pss,rowMapper);
+		User user = selectJdbcTemplate.queryForObject(sql, rowMapper, userId);
 		
 		return user;
     }
