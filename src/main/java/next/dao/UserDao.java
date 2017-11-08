@@ -46,13 +46,6 @@ public class UserDao {
 			}
 		};
 		
-    	PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement pstmt) throws SQLException {
-				pstmt.setString(1, userId);
-			}
-		};
-		
 		String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
     	JdbcTemplate selectJdbcTemplate = new JdbcTemplate();
 		User user = selectJdbcTemplate.queryForObject(sql, rowMapper, userId);
