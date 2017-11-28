@@ -137,5 +137,43 @@
 </script>
 
 <%@ include file="/include/footer.jspf" %>
+
+<script type="text/javascript">
+$(".answerWrite input[type=submit]").click(addAnswer);
+$(".article-util .link-delete-article").click(deleteAnswer);
+
+function addAnswer(e){
+	e.preventDefault();
+	var queryString = $("form[name='answer']").serialize();
+	console.log(queryString);
+	
+	$.ajax({
+		type : 'post',
+		url : '/api/qna/addAnswer',
+		data : queryString,
+		dataType : 'json',
+		error : onError,
+		success : onSuccess
+	});
+}
+
+function deleteAnswer(e){
+	e.preventDefault();
+	var queryString = $('')
+	
+}
+
+function onSuccess(json, status){
+	var answerTemplate = $('#answerTemplate').html();
+	var template = answerTemplate.format(json.writer, new Date(json.createdDate), json.contents, json.answerId);
+	$('.qna-comment-slipp-articles').prepend(template);
+}
+
+function onError(){
+	
+}
+
+
+</script>
 </body>
 </html>
