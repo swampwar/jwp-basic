@@ -8,9 +8,11 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import next.model.Answer;
+import next.model.Result;
 import core.jdbc.JdbcTemplate;
 import core.jdbc.KeyHolder;
 import core.jdbc.PreparedStatementCreator;
+import core.jdbc.PreparedStatementSetter;
 import core.jdbc.RowMapper;
 
 public class AnswerDao {
@@ -63,5 +65,20 @@ public class AnswerDao {
         };
 
         return jdbcTemplate.query(sql, rm, questionId);
+    }
+    
+    public Result delete(String answerId) {
+    	Result rslt;
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        String sql = "DELETE FROM ANSWERS WHERE ANSWERID = ? ";
+        int deletedCnt = jdbcTemplate.update(sql, answerId);
+        
+        if(deletedCnt > 0){
+        	rslt = Result.ok();
+        }else{
+        	rslt = Result.fail("답변 삭제중 에러가 발생했습니다.");
+        }
+        
+        return rslt;
     }
 }

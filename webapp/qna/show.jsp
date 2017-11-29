@@ -140,7 +140,7 @@
 
 <script type="text/javascript">
 $(".answerWrite input[type=submit]").click(addAnswer);
-$(".article-util .link-delete-article").click(deleteAnswer);
+$(".article-util button[type=submit]").click(deleteAnswer);
 
 function addAnswer(e){
 	e.preventDefault();
@@ -157,21 +157,43 @@ function addAnswer(e){
 	});
 }
 
-function deleteAnswer(e){
-	e.preventDefault();
-	var queryString = $('')
-	
-}
-
 function onSuccess(json, status){
 	var answerTemplate = $('#answerTemplate').html();
-	var template = answerTemplate.format(json.writer, new Date(json.createdDate), json.contents, json.answerId);
+	var template = answerTemplate.format(json.writer, new Date(json.createdDate), json.contents, json.answerId, json.answerId);
 	$('.qna-comment-slipp-articles').prepend(template);
+	
+	// 기존 입력란 비움
+	$('#writer').val('');
+	$('#contents').val('');
 }
 
 function onError(){
 	
 }
+
+function deleteAnswer(e){
+	e.preventDefault();
+	var button = $(this);
+	var form = $(this).closest('form');
+	var queryString = form.serialize();
+	console.log(queryString);
+	
+	$.ajax({
+		type : 'post',
+		url : '/api/qna/deleteAnswer',   
+		data : queryString,
+		dataType : 'json',
+        async: false,
+		error : function(json, status){
+			alert(json.message);
+		},
+		success : function(json, status){
+			button.closest('article').remove();
+		}
+	});
+}
+
+
 
 
 </script>

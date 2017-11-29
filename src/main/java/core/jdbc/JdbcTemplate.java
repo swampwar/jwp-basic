@@ -8,18 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcTemplate {
-    public void update(String sql, PreparedStatementSetter pss) throws DataAccessException {
+    public int update(String sql, PreparedStatementSetter pss) throws DataAccessException {
+    	int rsltCnt = 0;
+    	
         try (Connection conn = ConnectionManager.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pss.setParameters(pstmt);
-            pstmt.executeUpdate();
+            rsltCnt = pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(e);
         }
+        
+        return rsltCnt;
     }
 
-    public void update(String sql, Object... parameters) {
-        update(sql, createPreparedStatementSetter(parameters));
+    public int update(String sql, Object... parameters) {
+        return update(sql, createPreparedStatementSetter(parameters));
     }
 
     public void update(PreparedStatementCreator psc, KeyHolder holder) {
