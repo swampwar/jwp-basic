@@ -4,12 +4,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import core.mvc.Controller;
+import core.mvc.Controller2;
 import next.controller.UserSessionUtils;
 import next.dao.UserDao;
 import next.model.User;
 
-public class LoginController implements Controller {
+public class LoginController implements Controller2 {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         String userId = req.getParameter("userId");

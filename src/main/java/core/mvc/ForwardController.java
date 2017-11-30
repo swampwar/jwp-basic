@@ -14,9 +14,7 @@ public class ForwardController implements Controller {
     }
 
     @Override
-    public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        JspView jspView = new JspView();
-        jspView.putModel("viewName", forwardUrl);
-    	return jspView;
+    public View execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+    	return new JspView(forwardUrl);
     }
 }

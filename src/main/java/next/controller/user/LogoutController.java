@@ -4,10 +4,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import core.mvc.Controller;
+import core.mvc.Controller2;
 import next.controller.UserSessionUtils;
 
-public class LogoutController implements Controller {
+public class LogoutController implements Controller2 {
     @Override
     public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
         HttpSession session = req.getSession();

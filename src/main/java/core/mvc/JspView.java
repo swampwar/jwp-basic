@@ -1,35 +1,28 @@
 package core.mvc;
 
-import java.util.Iterator;
-
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class JspView implements ModelAndView {
+public class JspView implements View {
+	private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
+	private String viewName;
 	
-	@Override
-	public void execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		Iterator<String> it = model.keySet().iterator();
-		while(it.hasNext()){
-			String key = it.next();
-			req.setAttribute(key, getModel(key));
+	public JspView(String viewName){
+		if(viewName == null){
+			throw new NullPointerException("viewName is Null.");
 		}
+		this.viewName = viewName;
 	}
 	
 	@Override
-	public void putModel(String key, Object value){
-		model.put(key, value);
-	}
+	public void render(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
+            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
+            return;
+        }
 
-	@Override
-	public Object getModel(String key) {
-		return model.get(key);
+        RequestDispatcher rd = req.getRequestDispatcher(viewName);
+        rd.forward(req, resp);
 	}
-	
-	@Override
-	public boolean isMove() {
-		return true;
-	}
-
-
 }

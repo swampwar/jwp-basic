@@ -2,7 +2,6 @@ package core.mvc;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,8 +15,6 @@ import org.slf4j.LoggerFactory;
 public class DispatcherServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private static final String DEFAULT_REDIRECT_PREFIX = "redirect:";
-
     private RequestMapping rm;
 
     @Override
@@ -33,12 +30,8 @@ public class DispatcherServlet extends HttpServlet {
 
         Controller controller = rm.findController(requestUri);
         try {
-        	ModelAndView modelAndView = controller.execute(req, resp);
-        	modelAndView.execute(req, resp);
-        	
-        	if(modelAndView.isMove()){
-        		move((String)modelAndView.getModel("viewName"), req, resp);
-        	}
+        	View view = controller.execute(req, resp);
+        	view.render(req, resp);
             
         } catch (Throwable e) {
             logger.error("Exception : {}", e);
@@ -46,14 +39,4 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-    private void move(String viewName, HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        if (viewName.startsWith(DEFAULT_REDIRECT_PREFIX)) {
-            resp.sendRedirect(viewName.substring(DEFAULT_REDIRECT_PREFIX.length()));
-            return;
-        }
-
-        RequestDispatcher rd = req.getRequestDispatcher(viewName);
-        rd.forward(req, resp);
-    }
 }

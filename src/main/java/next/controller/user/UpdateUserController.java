@@ -6,12 +6,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import core.mvc.Controller;
+import core.mvc.Controller2;
 import next.controller.UserSessionUtils;
 import next.dao.UserDao;
 import next.model.User;
 
-public class UpdateUserController implements Controller {
+public class UpdateUserController implements Controller2 {
     private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
     @Override
