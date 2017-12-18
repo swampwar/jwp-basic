@@ -9,20 +9,27 @@ import org.slf4j.LoggerFactory;
 import core.mvc.AbstractController;
 import core.mvc.ModelAndView;
 import next.dao.AnswerDao;
+import next.dao.QuestionDao;
 import next.model.Answer;
+import next.model.Question;
 
 public class AddAnswerController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(AddAnswerController.class);
 
     private AnswerDao answerDao = new AnswerDao();
+    private QuestionDao qDao = new QuestionDao();
 
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse response) throws Exception {
-        Answer answer = new Answer(req.getParameter("writer"), req.getParameter("contents"),
-                Long.parseLong(req.getParameter("questionId")));
+        Answer answer = new Answer(req.getParameter("writer"), req.getParameter("contents"), Long.parseLong(req.getParameter("questionId")));
         log.debug("answer : {}", answer);
 
         Answer savedAnswer = answerDao.insert(answer);
-        return jsonView().addObject("answer", savedAnswer);
+        qDao.updateCntOfComment(Long.parseLong(req.getParameter("questionId")));
+        Question q = qDao.findById(Long.parseLong(req.getParameter("questionId")));
+        
+        ModelAndView mav = jsonView().addObject("answer", savedAnswer);
+        mav.addObject("countOfComment", q.getCountOfComment());
+        return mav;
     }
 }

@@ -18,6 +18,9 @@ function addAnswer(e) {
 
 function onSuccess(json, status){
   var answer = json.answer;
+  var countOfComment = json.countOfComment;
+  $(".qna-comment-count strong").text(countOfComment);
+  
   var answerTemplate = $("#answerTemplate").html();
   var template = answerTemplate.format(answer.writer, new Date(answer.createdDate), answer.contents, answer.answerId, answer.answerId);
   $(".qna-comment-slipp-articles").prepend(template);

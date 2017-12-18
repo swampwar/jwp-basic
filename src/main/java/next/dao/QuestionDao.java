@@ -17,8 +17,8 @@ public class QuestionDao {
     public Question insert(Question question) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate();
         String sql = "INSERT INTO QUESTIONS " + 
-                "(writer, title, contents, createdDate) " + 
-                " VALUES (?, ?, ?, ?)";
+                "(writer, title, contents, createdDate, countOfAnswer) " + 
+                " VALUES (?, ?, ?, ?, 0)";
         PreparedStatementCreator psc = new PreparedStatementCreator() {
             @Override
             public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -27,6 +27,26 @@ public class QuestionDao {
                 pstmt.setString(2, question.getTitle());
                 pstmt.setString(3, question.getContents());
                 pstmt.setTimestamp(4, new Timestamp(question.getTimeFromCreateDate()));
+                return pstmt;
+            }
+        };
+
+        KeyHolder keyHolder = new KeyHolder();
+        jdbcTemplate.update(psc, keyHolder);
+        return findById(keyHolder.getId());
+    }
+    
+    public Question updateCntOfComment(long questionId) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate();
+        String sql = "UPDATE QUESTIONS SET countOfAnswer = "
+        		+ "((SELECT countOfAnswer FROM QUESTIONS where questionId=?) + 1)" + 
+                "WHERE questionId = ?";
+        PreparedStatementCreator psc = new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                PreparedStatement pstmt = con.prepareStatement(sql);
+                pstmt.setLong(1, questionId);
+                pstmt.setLong(2, questionId);
                 return pstmt;
             }
         };
