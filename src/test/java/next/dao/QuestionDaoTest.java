@@ -27,6 +27,11 @@ public class QuestionDaoTest {
         QuestionDao questionDao = new QuestionDao();
         Question savedQuestion = questionDao.insert(question);
         log.debug("question : {}", savedQuestion);
+        
+        //log.debug("question 1: {}", questionDao.findById(9));
+        questionDao.updateCntOfComment(savedQuestion.getQuestionId());
+        log.debug("question 2: {}", questionDao.findById(savedQuestion.getQuestionId()));
+        
     }
 
 }
