@@ -74,10 +74,12 @@
 									<ul class="article-util-list">
 										<li>
 											<a class="link-modify-article" href="/api/qna/updateAnswer?answerId=5">수정</a>
+											<a id="testAtag" href="#">테스트</a>
 										</li>
 										<li>
-											<form class="form-delete" action="/api/qna/deleteAnswer" method="POST">
+											<form class="form-delete" action="" method="POST">
 												<input type="hidden" name="answerId" value="${answer.answerId}">
+												<input type="hidden" name="questionId" value="${question.questionId}">
 												<button type="submit" class="link-delete-article">삭제</button>
 											</form>
 										</li>
@@ -126,7 +128,7 @@
 				<a class="link-modify-article" href="/api/qna/updateAnswer/{3}">수정</a>
 			</li>
 			<li>
-				<form class="form-delete" action="/api/qna/deleteAnswer" method="POST">
+				<form class="form-delete" action="" method="POST">
 					<input type="hidden" name="answerId" value="{4}" />
 					<button type="submit" class="link-delete-article">삭제</button>
 				</form>
@@ -137,6 +139,7 @@
 </script>
 <%@ include file="/include/footer.jspf" %>
 <script type="text/javascript">
+
 </script>
 </body>
 </html>
