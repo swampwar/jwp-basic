@@ -3,12 +3,16 @@ package core.mvc;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import next.controller.HomeController;
 import next.controller.qna.AddAnswerController;
 import next.controller.qna.CreateQuestionController;
 import next.controller.qna.DeleteAnswerController;
 import next.controller.qna.ListQuestionApiController;
 import next.controller.qna.ShowController;
+import next.controller.qna.UpdateFormQuestionController;
 import next.controller.user.CreateUserController;
 import next.controller.user.ListUserController;
 import next.controller.user.LoginController;
@@ -16,9 +20,6 @@ import next.controller.user.LogoutController;
 import next.controller.user.ProfileController;
 import next.controller.user.UpdateFormUserController;
 import next.controller.user.UpdateUserController;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RequestMapping {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
@@ -38,6 +39,7 @@ public class RequestMapping {
         mappings.put("/qna/form", new ForwardController("/qna/form.jsp"));
         mappings.put("/qna/show", new ShowController());
         mappings.put("/qna/create", new CreateQuestionController());
+        mappings.put("/qna/updateForm", new UpdateFormQuestionController());
         mappings.put("/api/qna/addAnswer", new AddAnswerController());
         mappings.put("/api/qna/deleteAnswer", new DeleteAnswerController());
         mappings.put("/api/qna/list", new ListQuestionApiController());

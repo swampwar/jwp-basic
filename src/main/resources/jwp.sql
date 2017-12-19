@@ -33,6 +33,8 @@ CREATE TABLE ANSWERS (
 	questionId			bigint				NOT NULL,				
 	PRIMARY KEY         (answerId)
 );
+INSERT INTO USERS (userId, password, name, email) VALUES
+('user', '1','username', 'eefef@gmail.com',);
 
 INSERT INTO QUESTIONS (questionId, writer, title, contents, createdDate, countOfAnswer) VALUES
 (1, '자바지기',
