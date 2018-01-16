@@ -34,13 +34,14 @@ public class UpdateFormQuestionController extends AbstractController {
     	}else{
     		User user = (User)session.getAttribute("user");
     		String ssUserId = user.getUserId();
-    		if(!originQ.equals(ssUserId)){
-    			log.debug("세션에 userId와 Qeustion userId가 다름");
-    			throw new AccessDeniedException("세션에 userId와 Qeustion userId가 다름");
+    		String ssUserName = user.getName();
+    		if(!originQ.getWriter().equals(ssUserName)){
+    			log.debug("세션에 userName와 Qeustion Writer가 다름"); // Question 클래스에  사용자의 ID를 인스턴스변수로 가지고 있지 않아서 Name으로 비교한다.
+    			throw new AccessDeniedException("세션에 userName와 Qeustion Writer가 다름");
     		}
     	}
     	
     	// 질문폼으로 이동
-        return jspView("/qna/form");
+        return jspView("/qna/form.jsp").addObject("question", originQ);
     }
 }
