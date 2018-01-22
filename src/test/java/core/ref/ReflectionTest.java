@@ -1,5 +1,9 @@
 package core.ref;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +17,25 @@ public class ReflectionTest {
     @Test
     public void showClass() {
         Class<Question> clazz = Question.class;
+
+        Field[] declFields = clazz.getDeclaredFields();
+        logger.debug("Question Field ############");
+        for(Field f : declFields) {
+        	logger.debug(f.toString());
+        }
+        
+        Constructor[] constructors = clazz.getConstructors();
+        logger.debug("Question Constructor ############");
+        for(Constructor c : constructors) {
+        	logger.debug(c.toString());
+        }
+        
+        Method[] methods = clazz.getMethods();
+        logger.debug("Question Method ############");
+        for(Method m : methods) {
+        	logger.debug(m.toString());
+        }
+        
         logger.debug(clazz.getName());
     }
     
