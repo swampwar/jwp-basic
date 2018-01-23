@@ -9,9 +9,11 @@ import next.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import core.annotation.Controller;
 import core.mvc.AbstractController;
 import core.mvc.ModelAndView;
 
+@Controller
 public class CreateUserController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
 
