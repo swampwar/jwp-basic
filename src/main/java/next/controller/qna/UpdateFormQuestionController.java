@@ -3,14 +3,18 @@ package next.controller.qna;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import next.controller.UserSessionUtils;
-import next.dao.QuestionDao;
-import next.model.Question;
 import core.mvc.AbstractController;
 import core.mvc.ModelAndView;
+import next.controller.UserSessionUtils;
+import next.model.Question;
+import next.service.QnaService;
 
 public class UpdateFormQuestionController extends AbstractController {
-    private QuestionDao questionDao = QuestionDao.getInstance();
+    private QnaService qnaService;
+    
+    public UpdateFormQuestionController(QnaService qnaService){
+    	this.qnaService = qnaService;
+    }
 
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {
@@ -19,7 +23,7 @@ public class UpdateFormQuestionController extends AbstractController {
         }
 
         long questionId = Long.parseLong(req.getParameter("questionId"));
-        Question question = questionDao.findById(questionId);
+        Question question = qnaService.findById(questionId);
         if (!question.isSameUser(UserSessionUtils.getUserFromSession(req.getSession()))) {
             throw new IllegalStateException("다른 사용자가 쓴 글을 수정할 수 없습니다.");
         }

@@ -15,7 +15,7 @@ public class AnnotationHandlerMappingTest {
 
     @Before
     public void setup() {
-        handlerMapping = new AnnotationHandlerMapping("core.nmvc");
+        handlerMapping = new AnnotationHandlerMapping("core");
         handlerMapping.initialize();
 
         response = new MockHttpServletResponse();
@@ -47,4 +47,5 @@ public class AnnotationHandlerMappingTest {
         mav.getView().render(mav.getModel(), request, response);
         assertEquals("/users", response.getRedirectedUrl());
     }
+
 }

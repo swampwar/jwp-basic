@@ -9,18 +9,20 @@ import org.slf4j.LoggerFactory;
 import core.mvc.AbstractController;
 import core.mvc.ModelAndView;
 import next.controller.UserSessionUtils;
-import next.dao.AnswerDao;
-import next.dao.QuestionDao;
 import next.model.Answer;
 import next.model.Result;
 import next.model.User;
+import next.service.QnaService;
 
 public class AddAnswerController extends AbstractController {
     private static final Logger log = LoggerFactory.getLogger(AddAnswerController.class);
 
-    private QuestionDao questionDao = QuestionDao.getInstance();
-    private AnswerDao answerDao = AnswerDao.getInstance();
-
+    private QnaService qnaService;
+    
+    public AddAnswerController(QnaService qnaService){
+    	this.qnaService = qnaService;
+    }
+    
     @Override
     public ModelAndView execute(HttpServletRequest req, HttpServletResponse response) throws Exception {
         if (!UserSessionUtils.isLogined(req.getSession())) {
@@ -32,8 +34,8 @@ public class AddAnswerController extends AbstractController {
                 Long.parseLong(req.getParameter("questionId")));
         log.debug("answer : {}", answer);
 
-        Answer savedAnswer = answerDao.insert(answer);
-        questionDao.updateCountOfAnswer(savedAnswer.getQuestionId());
+        Answer savedAnswer = qnaService.insert(answer);
+        qnaService.updateCountOfAnswer(savedAnswer.getQuestionId());
 
         return jsonView().addObject("answer", savedAnswer).addObject("result", Result.ok());
     }

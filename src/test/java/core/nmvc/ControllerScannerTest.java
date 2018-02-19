@@ -13,16 +13,10 @@ public class ControllerScannerTest {
 	
     @Test
 	public void init(){
-    	ControllerScanner controllerScanner = new ControllerScanner();
-    	Map<Class<?>, Object> map = controllerScanner.getControllers();
+    	Map<Class<?>, Object> controllers = (new ControllerScanner("next.controller")).getControllers();
+    	Set<Class<?>> controllerKeySet = controllers.keySet();
     	
-    	Set<Class<?>> set = map.keySet();
-		Iterator<?> iterator = (Iterator<?>)set.iterator();
-		while(iterator.hasNext()){
-			Class<?> clazz = (Class<?>)iterator.next();
-			logger.debug(clazz.getName());
-			logger.debug(map.get(clazz).toString());
-		}
-		
+    	for(Class<?> keyClazz : controllerKeySet)
+    		logger.debug(keyClazz.getName());
 	}
 }
