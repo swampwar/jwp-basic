@@ -28,34 +28,19 @@ public class QnaService {
 
 	public void deleteQuestion(long questionId, User user) throws CannotDeleteException {
 		Question question = questionDao.findById(questionId);
+		List<Answer> answers = answerDao.findAllByQuestionId(questionId);
+
 		if (question == null) {
 			throw new CannotDeleteException("존재하지 않는 질문입니다.");
 		}
 
-		if (!question.isSameUser(user)) {
-			throw new CannotDeleteException("다른 사용자가 쓴 글을 삭제할 수 없습니다.");
-		}
-
-		List<Answer> answers = answerDao.findAllByQuestionId(questionId);
-		if (answers.isEmpty()) {
+		/*
+		 *  Qestion, User, Answer 의 메서드를 추가하여 질문이 삭제가 가능한지 체크하는 메서드를 구현했다.
+		 *  객체지향 개발의 핵심은 여러 객체가 서로협력하면서 로직을 구현한다는 점이다.
+		 */
+		if(question.canDelete(user, answers)){
 			questionDao.delete(questionId);
-			return;
 		}
-
-		boolean canDelete = true;
-		for (Answer answer : answers) {
-			String writer = question.getWriter();
-			if (!writer.equals(answer.getWriter())) {
-				canDelete = false;
-				break;
-			}
-		}
-
-		if (!canDelete) {
-			throw new CannotDeleteException("다른 사용자가 추가한 댓글이 존재해 삭제할 수 없습니다.");
-		}
-
-		questionDao.delete(questionId);
 	}
 	
 	public void delete(Long answerId){

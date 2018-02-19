@@ -2,6 +2,8 @@ package next.model;
 
 import java.util.Date;
 
+import next.CannotDeleteException;
+
 public class Answer {
     private long answerId;
 
@@ -47,6 +49,10 @@ public class Answer {
 
     public long getQuestionId() {
         return questionId;
+    }
+    
+    public boolean canDelete(User user){
+    	return user.isSameUser(this.writer);
     }
 
     @Override
