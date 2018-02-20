@@ -1,7 +1,6 @@
 package core.di.factory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +11,8 @@ import org.springframework.beans.BeanUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import core.annotation.Controller;
 
 public class BeanFactory {
     private static final Logger logger = LoggerFactory.getLogger(BeanFactory.class);
@@ -26,7 +27,7 @@ public class BeanFactory {
         return (T) beans.get(requiredType);
     }
 
-    public void initialize() throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public void initialize(){
     	// Map<Class<?>, Object> beans 에 대한 초기화 작업을 한다.
     	for(Class<?> clazz : preInstanticateBeans){
     		if(beans.get(clazz) == null){
@@ -78,5 +79,17 @@ public class BeanFactory {
     	
     	logger.debug("Bean Injected생성자 신규생성 : {}", constructor.getName());
     	return BeanUtils.instantiateClass(constructor, args.toArray());
+    }
+    
+    // beans에서 Controller애노테이션 클래스의 인스턴스를 Map으로 반환한다.
+    public Map<Class<?>, Object> getControllers(){
+    	Map<Class<?>, Object> controllerBeans = Maps.newHashMap();
+    	Set<Class<?>> keySet = beans.keySet();
+    	for(Class<?> clazz : keySet){
+    		if(clazz.getAnnotation(Controller.class) != null){
+    			controllerBeans.put(clazz, beans.get(clazz));
+    		}
+    	}
+    	return controllerBeans;
     }
 }
