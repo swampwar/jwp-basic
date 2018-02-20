@@ -3,6 +3,7 @@ package core.di.factory;
 import static org.junit.Assert.assertNotNull;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 import org.junit.Before;
@@ -23,7 +24,7 @@ public class BeanFactoryTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void setup() {
+    public void setup() throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         reflections = new Reflections("core.di.factory.example");
         Set<Class<?>> preInstanticateClazz = getTypesAnnotatedWith(Controller.class, Service.class, Repository.class);
         beanFactory = new BeanFactory(preInstanticateClazz);
