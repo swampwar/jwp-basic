@@ -4,7 +4,11 @@ import static org.reflections.ReflectionUtils.getAllConstructors;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Set;
+
+import org.reflections.ReflectionUtils;
 
 import com.google.common.collect.Sets;
 
@@ -49,4 +53,22 @@ public class BeanFactoryUtils {
 
         throw new IllegalStateException(injectedClazz + "인터페이스를 구현하는 Bean이 존재하지 않는다.");
     }
+    
+    @SuppressWarnings("unchecked")
+    public static Set<Field> getInjectedFields(Class<?> clazz) {
+		Set<Field> injectedFields = ReflectionUtils.getAllFields(clazz, withAnnotation(Inject.class));
+        if (injectedFields.isEmpty()) {
+            return null;
+        }
+        return injectedFields;
+    }
+
+    @SuppressWarnings("unchecked")
+	public static Set<Method> getInjectedMethods(Class<?> clazz) {
+		Set<Method> injectedMethods = ReflectionUtils.getAllMethods(clazz, withAnnotation(Inject.class));
+        if (injectedMethods.isEmpty()) {
+            return null;
+        }
+        return injectedMethods;
+	}
 }
